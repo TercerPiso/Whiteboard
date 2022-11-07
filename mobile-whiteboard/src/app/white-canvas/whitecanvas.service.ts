@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MouseActions, Point } from './objects';
+import { MouseActions, PenModes, Point } from './objects';
 
 // an adaptation of this answer: https://stackoverflow.com/questions/2368784/draw-on-html5-canvas-using-a-mouse
 
@@ -18,24 +18,30 @@ export class WhitecanvasService {
   private dotFlag = false;
 
   private fillStyle = 'black';
-  private stroke = 'black';
+  private stroke = '#000000';
   private lineWidth = 2;
+
+  private mode = PenModes.PAINT;
 
   constructor() { }
 
   public initCanvas(element: HTMLCanvasElement) {
     this.canvas = element;
     this.context = element.getContext('2d');
-    this.canvas.addEventListener('mousemove', (e) => this.process(MouseActions.MOVE, e));
-    this.canvas.addEventListener('mousedown', (e) => this.process(MouseActions.DOWN, e));
-    this.canvas.addEventListener('mouseup', (e) => this.process(MouseActions.UP, e));
-    this.canvas.addEventListener('mouseout', (e) => this.process(MouseActions.OUT, e));
+    // this.canvas.addEventListener('mousemove', (e) => this.process(MouseActions.MOVE, e));
+    // this.canvas.addEventListener('mousedown', (e) => this.process(MouseActions.DOWN, e));
+    // this.canvas.addEventListener('mouseup', (e) => this.process(MouseActions.UP, e));
+    // this.canvas.addEventListener('mouseout', (e) => this.process(MouseActions.OUT, e));
     // touch events
     this.canvas.addEventListener('touchmove', (e) => this.process(MouseActions.MOVE, e));
     this.canvas.addEventListener('touchstart', (e) => this.process(MouseActions.DOWN, e));
     this.canvas.addEventListener('touchend', (e) => this.process(MouseActions.UP, e));
     this.canvas.addEventListener('touchleave', (e: TouchEvent) => this.process(MouseActions.OUT, e));
     this.canvas.addEventListener('touchcancel', (e) => this.process(MouseActions.OUT, e));
+  }
+
+  public changeMode(mode: PenModes) {
+    this.mode = mode;
   }
 
   public erease() {
@@ -63,17 +69,18 @@ export class WhitecanvasService {
   private startPath(client: Point) {
     this.previousPosition = this.currentPosition;
     this.currentPosition = new Point(
-      client.x - this.canvas.offsetLeft,
-      client.y - this.canvas.offsetTop
+      client.x - this.canvas.getBoundingClientRect().left,
+      client.y - this.canvas.getBoundingClientRect().top
     );
     this.flag = true;
     this.dotFlag = true;
     if (this.dotFlag) {
-        this.context.beginPath();
-        this.context.fillStyle = this.fillStyle;
-        this.context.fillRect(this.currentPosition.x, this.currentPosition.y, 2, 2);
-        this.context.closePath();
-        this.dotFlag = false;
+      if(this.mode === PenModes.PAINT) {
+        this.startDraw();
+      } else {
+        this.clear();
+      }
+      this.dotFlag = false;
     }
   }
 
@@ -81,15 +88,32 @@ export class WhitecanvasService {
     if (this.flag) {
       this.previousPosition = this.currentPosition;
       this.currentPosition = new Point(
-        client.x - this.canvas.offsetLeft,
-        client.y - this.canvas.offsetTop
+        client.x - this.canvas.getBoundingClientRect().left,
+        client.y - this.canvas.getBoundingClientRect().top
       );
-      this.draw();
+      if(this.mode === PenModes.PAINT) {
+        this.draw();
+      } else {
+        this.clear();
+      }
+    }
   }
+
+  private clear() {
+    this.context.beginPath();
+    this.fillStyle = 'white';
+    this.context.arc(this.currentPosition.x, this.currentPosition.y, (this.lineWidth * 2), 0, 2 * Math.PI, false);
+    this.context.fill();
+  }
+
+  private startDraw() {
+    this.context.beginPath();
+    this.context.fillStyle = this.fillStyle;
+    this.context.fillRect(this.currentPosition.x, this.currentPosition.y, 2, 2);
+    this.context.closePath();
   }
 
   private draw() {
-    console.log('Drawing in ', this.currentPosition);
     this.context.beginPath();
     this.context.moveTo(this.previousPosition.x, this.previousPosition.y);
     this.context.lineTo(this.currentPosition.x, this.currentPosition.y);

@@ -19,3 +19,8 @@ export enum MouseActions {
   UP,
   DOWN,
 }
+
+export enum PenModes {
+  PAINT,
+  CLEAR
+}
