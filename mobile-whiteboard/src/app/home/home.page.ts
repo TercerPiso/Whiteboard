@@ -2,7 +2,9 @@ import { PenRgb } from './../white-canvas/objects';
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { PenModes, Point } from '../white-canvas/objects';
 import { WhitecanvasService } from '../white-canvas/whitecanvas.service';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
+import { DocumentsComponent } from './documents/documents.component';
+import { SaveComponent } from './save/save.component';
 
 @Component({
   selector: 'app-home',
@@ -38,7 +40,30 @@ export class HomePage implements AfterViewInit {
   };
 
   constructor(private readonly whiteCanvasSrv: WhitecanvasService,
-    private readonly alertController: AlertController) { }
+              private readonly alertController: AlertController,
+              private readonly modalCtrl: ModalController) { }
+
+  async openSketch(isCancellable) {
+    const modal = await this.modalCtrl.create({
+      component: DocumentsComponent,
+      componentProps: {
+        isCancellable
+      }
+    });
+    modal.present();
+    const { data, role } = await modal.onWillDismiss();
+  }
+
+  async saveSketch(isCancellable) {
+    const modal = await this.modalCtrl.create({
+      component: SaveComponent,
+      componentProps: {
+        isCancellable
+      }
+    });
+    modal.present();
+    const { data, role } = await modal.onWillDismiss();
+  }
 
   ngAfterViewInit(): void {
     this.windowSize.width = window.innerWidth;
@@ -49,7 +74,7 @@ export class HomePage implements AfterViewInit {
     this.canvas.nativeElement.height = this.sizeCanvas.height;
     this.center();
     addEventListener('touchstart', (e) => {
-      if (e.touches.length > 1) {
+      if (e.touches.length > 1 || e.shiftKey) {
         this.prevMovement = new Point(
           e.touches[e.touches.length - 1].clientX,
           e.touches[e.touches.length - 1].clientY
@@ -57,7 +82,7 @@ export class HomePage implements AfterViewInit {
       }
     }, {passive: false});
     addEventListener('touchmove', (e) => {
-      if (e.touches.length > 1) {
+      if (e.touches.length > 1 || e.shiftKey) {
         console.log('Doble Touch movement');
         const current = new Point(
           e.touches[e.touches.length - 1].clientX,
@@ -85,6 +110,7 @@ export class HomePage implements AfterViewInit {
       lineWidth: this.lineWidth,
       stroke: this.stroke
     });
+    this.openSketch(false);
   }
 
   center() {
@@ -181,7 +207,11 @@ export class HomePage implements AfterViewInit {
     });
   }
 
-  async save() {
+  save() {
+    this.saveSketch(true);
+  }
+
+  async _save() {
     const alert = await this.alertController.create({
       header: 'Please enter the name',
       buttons: [
@@ -229,7 +259,11 @@ export class HomePage implements AfterViewInit {
     alert.present();
   }
 
-  async load() {
+  load() {
+    this.openSketch(true);
+  }
+
+  async _load() {
     const alert = await this.alertController.create({
       header: 'Please enter the name',
       buttons: [

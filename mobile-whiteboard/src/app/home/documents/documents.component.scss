@@ -1,0 +1,35 @@
+// ion-content {
+//     --background: radial-gradient(#006e5e, #004e43);
+// }
+
+section {
+    height: 100%;
+    display: flex;
+    aside {
+        width: 35vw;
+        ion-card {
+            height: 85%;
+            ion-list {
+                height: 60vh;
+                overflow-y: scroll;
+            }
+            ion-card-title {
+                position: relative;
+                ion-icon {
+                    position: absolute;
+                    top: 0px;
+                    height: 100%;
+                    right: 0px;
+                }
+            }
+        }
+    }
+}
+
+span {
+    font-size: 16px;
+    font-weight: bold;
+    color: gray;
+    text-align: center;
+    display: block;
+}

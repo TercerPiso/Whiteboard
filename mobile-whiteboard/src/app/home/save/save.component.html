@@ -1,0 +1,53 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start" *ngIf="isCancellable">
+      <ion-button (click)="cancel()">Cancel</ion-button>
+    </ion-buttons>
+    <ion-title>
+      Save Sketch
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="confirm()" [strong]="true">Confirm</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  
+  <section>
+    <aside>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            Select folder
+            <ion-icon name="add-circle"></ion-icon>
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list lines="none">
+            <ion-item-sliding>
+              <ion-item color="primary">
+                <ion-icon name="folder-open" slot="start"></ion-icon>
+                First Folder sarasa qweeqwwq
+              </ion-item>
+              <ion-item-options>
+                <ion-item-option color="danger"><ion-icon name="trash"></ion-icon></ion-item-option>
+              </ion-item-options>
+            </ion-item-sliding>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+    </aside>
+    <aside>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            Sketch
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <input type="text" placeholder="Sketch name"/>
+        </ion-card-content>
+      </ion-card>
+    </aside>
+  </section>
+</ion-content>

@@ -1,0 +1,120 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start" *ngIf="isCancellable">
+      <ion-button (click)="cancel()">Cancel</ion-button>
+    </ion-buttons>
+    <ion-title>
+      Open Sketch
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="confirm()" [strong]="true">Confirm</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+
+  <section>
+    <aside>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            Folders
+            <ion-icon name="add-circle"></ion-icon>
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list lines="none">
+            <ion-item color="primary">
+              <ion-icon name="chevron-back-circle" slot="start"></ion-icon>
+              Last
+            </ion-item>
+            <ion-item>
+              <ion-icon name="add-circle" slot="start"></ion-icon>
+              New file
+            </ion-item>
+
+
+
+            <ion-item-sliding>
+              <ion-item>
+                <ion-icon name="folder-open" slot="start"></ion-icon>
+                First Folder sarasa qweeqwwq
+              </ion-item>
+              <ion-item-options>
+                <ion-item-option color="danger"><ion-icon name="trash"></ion-icon></ion-item-option>
+              </ion-item-options>
+            </ion-item-sliding>
+
+
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+    </aside>
+    <aside>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Files</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list lines="none">
+
+            <ion-item-sliding>
+              <ion-item>
+                <ion-thumbnail slot="start">
+                  <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
+                </ion-thumbnail>
+                First item
+              </ion-item>
+              <ion-item-options>
+                <ion-item-option color="success"><ion-icon name="create"></ion-icon></ion-item-option>
+                <ion-item-option color="danger"><ion-icon name="trash"></ion-icon></ion-item-option>
+              </ion-item-options>
+            </ion-item-sliding>
+
+            <ion-item-sliding>
+              <ion-item>
+                <ion-thumbnail slot="start">
+                  <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
+                </ion-thumbnail>
+                Second item
+              </ion-item>
+              <ion-item-options>
+                <ion-item-option color="success"><ion-icon name="create"></ion-icon></ion-item-option>
+                <ion-item-option color="danger"><ion-icon name="trash"></ion-icon></ion-item-option>
+              </ion-item-options>
+            </ion-item-sliding>
+
+            <ion-item-sliding>
+              <ion-item>
+                <ion-thumbnail slot="start">
+                  <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
+                </ion-thumbnail>
+                Third item
+              </ion-item>
+              <ion-item-options>
+                <ion-item-option color="success"><ion-icon name="create"></ion-icon></ion-item-option>
+                <ion-item-option color="danger"><ion-icon name="trash"></ion-icon></ion-item-option>
+              </ion-item-options>
+            </ion-item-sliding>
+
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+    </aside>
+    <aside>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Preview</ion-card-title>
+          <ion-card-subtitle>
+            <img src="https://i.imgur.com/SG831C7.jpeg" />
+          </ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <span>26/06/30 20:00</span>
+        </ion-card-content>
+      </ion-card>
+    </aside>
+  </section>
+
+
+</ion-content>
