@@ -28,10 +28,6 @@ export class WhitecanvasService {
   public initCanvas(element: HTMLCanvasElement) {
     this.canvas = element;
     this.context = element.getContext('2d');
-    // this.canvas.addEventListener('mousemove', (e) => this.process(MouseActions.MOVE, e));
-    // this.canvas.addEventListener('mousedown', (e) => this.process(MouseActions.DOWN, e));
-    // this.canvas.addEventListener('mouseup', (e) => this.process(MouseActions.UP, e));
-    // this.canvas.addEventListener('mouseout', (e) => this.process(MouseActions.OUT, e));
     // touch events
     this.canvas.addEventListener('touchmove', (e) => this.process(MouseActions.MOVE, e));
     this.canvas.addEventListener('touchstart', (e) => this.process(MouseActions.DOWN, e));
@@ -59,23 +55,25 @@ export class WhitecanvasService {
     }
   }
 
-  private process(action: MouseActions, event: MouseEvent | TouchEvent) {
+  private process(action: MouseActions, event: TouchEvent) {
     if (action === MouseActions.DOWN) {
       this.startPath({
-        x: event instanceof MouseEvent ? event.clientX : event.touches[0].clientX,
-        y: event instanceof MouseEvent ? event.clientY : event.touches[0].clientY
-      });
+        x: event.touches[0].clientX,
+        y: event.touches[0].clientY
+      },
+      event.touches[0].force);
     } else if (action === MouseActions.MOVE) {
       this.updatePath({
-        x: event instanceof MouseEvent ? event.clientX : event.touches[0].clientX,
-        y: event instanceof MouseEvent ? event.clientY : event.touches[0].clientY
-      });
+        x: event.touches[0].clientX,
+        y: event.touches[0].clientY
+      },
+      event.touches[0].force);
     } else if (action === MouseActions.UP || action === MouseActions.OUT) {
       this.flag = false;
     }
   }
 
-  private startPath(client: Point) {
+  private startPath(client: Point, force: number) {
     this.previousPosition = this.currentPosition;
     this.currentPosition = new Point(
       client.x - this.canvas.getBoundingClientRect().left,
@@ -93,7 +91,7 @@ export class WhitecanvasService {
     }
   }
 
-  private updatePath(client: Point) {
+  private updatePath(client: Point, force: number) {
     if (this.flag) {
       this.previousPosition = this.currentPosition;
       this.currentPosition = new Point(
@@ -101,7 +99,7 @@ export class WhitecanvasService {
         client.y - this.canvas.getBoundingClientRect().top
       );
       if(this.mode === PenModes.PAINT) {
-        this.draw();
+        this.draw(force > 0 ? force : 1);
       } else {
         this.clear();
       }
@@ -122,12 +120,12 @@ export class WhitecanvasService {
     this.context.closePath();
   }
 
-  private draw() {
+  private draw(force: number) {
     this.context.beginPath();
     this.context.moveTo(this.previousPosition.x, this.previousPosition.y);
     this.context.lineTo(this.currentPosition.x, this.currentPosition.y);
     this.context.strokeStyle = this.stroke;
-    this.context.lineWidth = this.lineWidth;
+    this.context.lineWidth = this.lineWidth * force;
     this.context.stroke();
     this.context.closePath();
   }
