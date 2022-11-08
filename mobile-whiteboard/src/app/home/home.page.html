@@ -9,17 +9,19 @@
 <ion-content [fullscreen]="true">
   <canvas #canvas></canvas>
 
-  <ion-fab slot="fixed" vertical="top" horizontal="end">
+  <ion-fab slot="fixed" vertical="bottom" horizontal="start">
     <ion-fab-button>
       <ion-icon name="save"></ion-icon>
     </ion-fab-button>
-    <ion-fab-list side="start">
+    <ion-fab-list side="end">
       <ion-fab-button (click)="load()">
         <ion-icon name="folder-open"></ion-icon>
       </ion-fab-button>
       <ion-fab-button (click)="save()">
         <ion-icon name="save"></ion-icon>
       </ion-fab-button>
+    </ion-fab-list>
+    <ion-fab-list side="top">
       <ion-fab-button (click)="trash()">
         <ion-icon name="trash" color="danger"></ion-icon>
       </ion-fab-button>
@@ -44,6 +46,8 @@
       <ion-fab-button (click)="paint(2,48,144)">
         <ion-icon name="pencil" class="blue"></ion-icon>
       </ion-fab-button>
+    </ion-fab-list>
+    <ion-fab-list side="top">
       <ion-fab-button (click)="changeMode('CLEAR')">
         <ion-icon name="ellipse"></ion-icon>
       </ion-fab-button>
