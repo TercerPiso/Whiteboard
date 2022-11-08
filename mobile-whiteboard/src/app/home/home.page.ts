@@ -55,7 +55,7 @@ export class HomePage implements AfterViewInit {
           e.touches[e.touches.length - 1].clientY
         );
       }
-    });
+    }, {passive: false});
     addEventListener('touchmove', (e) => {
       if (e.touches.length > 1) {
         console.log('Doble Touch movement');
