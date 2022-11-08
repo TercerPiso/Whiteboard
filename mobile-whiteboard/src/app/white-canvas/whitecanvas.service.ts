@@ -57,6 +57,14 @@ export class WhitecanvasService {
     return this.canvas.toDataURL();
   }
 
+  public load(dataURL: string) {
+    const img = new Image();
+    img.onload = () => {
+      this.context.drawImage(img,0,0); // Or at whatever offset you like
+    };
+    img.src = dataURL;
+  }
+
   private process(action: MouseActions, event: TouchEvent) {
     if (action === MouseActions.DOWN) {
       this.startPath({

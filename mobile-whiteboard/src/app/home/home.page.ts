@@ -105,8 +105,45 @@ export class HomePage implements AfterViewInit{
     alert.present();
   }
 
-  load() {
-
+  async load() {
+    const alert = await this.alertController.create({
+      header: 'Please enter the name',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'Load',
+          role: 'confirm',
+          handler: (evt) => {
+            if(evt.name) {
+              if(!localStorage.getItem(evt.name)) {
+                // ya existe
+                this.alertController.create({
+                  header: 'File doesn`t exists',
+                  buttons: [
+                    {
+                      text: 'Ok',
+                      role: 'ok',
+                    },
+                  ],
+                }).then(d => d.present());
+              } else {
+                this.whiteCanvasSrv.load(localStorage.getItem(evt.name));
+              }
+            }
+          },
+        },
+      ],
+      inputs: [
+        {
+          placeholder: 'Name',
+          name: 'name'
+        },
+      ],
+    });
+    alert.present();
   }
 
   async trash() {
