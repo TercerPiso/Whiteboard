@@ -142,7 +142,7 @@ export class HomePage implements AfterViewInit {
           role: 'cancel',
         },
         {
-          text: 'Save',
+          text: 'Apply',
           role: 'confirm',
           handler: (evt) => {
             if(evt.size) {
