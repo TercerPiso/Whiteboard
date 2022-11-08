@@ -67,6 +67,7 @@ export class WhitecanvasService {
   }
 
   private process(action: MouseActions, event: TouchEvent) {
+    event.preventDefault();
     if(event.touches.length > 1) {
       return;
     }
