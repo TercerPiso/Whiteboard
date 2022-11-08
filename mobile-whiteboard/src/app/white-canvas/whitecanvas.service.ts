@@ -22,7 +22,7 @@ export class WhitecanvasService {
   private lineWidth = 2;
 
   private mode = PenModes.PAINT;
-  private pressureEnabled = false;
+  private forceEnabled = false;
 
   constructor() { }
 
@@ -72,13 +72,13 @@ export class WhitecanvasService {
         x: event.touches[0].clientX,
         y: event.touches[0].clientY
       },
-      this.pressureEnabled ? event.touches[0].force : 1);
+      this.forceEnabled ? event.touches[0].force : 1);
     } else if (action === MouseActions.MOVE) {
       this.updatePath({
         x: event.touches[0].clientX,
         y: event.touches[0].clientY
       },
-      this.pressureEnabled ? event.touches[0].force : 1);
+      this.forceEnabled ? event.touches[0].force : 1);
     } else if (action === MouseActions.UP || action === MouseActions.OUT) {
       this.flag = false;
     }
