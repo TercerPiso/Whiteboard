@@ -9,14 +9,14 @@ import { AlertController } from '@ionic/angular';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements AfterViewInit{
+export class HomePage implements AfterViewInit {
 
   @ViewChild('canvas') canvas: ElementRef<HTMLCanvasElement>;
   @ViewChild('content') content: ElementRef<HTMLImageElement>;
 
   public mode: PenModes = PenModes.PAINT;
-  public stroke = new PenRgb(0,0,0);
-  public lineWidth = 6;
+  public stroke = new PenRgb(0, 0, 0);
+  public lineWidth = localStorage.getItem('-CFG-CUSTOM-L') ? parseInt(localStorage.getItem('-CFG-CUSTOM-L'), 10) : 6;
   public mousePosition: Point = new Point();
 
   public canvasPosition: Point = new Point();
@@ -38,30 +38,30 @@ export class HomePage implements AfterViewInit{
   };
 
   constructor(private readonly whiteCanvasSrv: WhitecanvasService,
-              private readonly alertController: AlertController) {}
+    private readonly alertController: AlertController) { }
 
   ngAfterViewInit(): void {
     this.windowSize.width = window.innerWidth;
     this.windowSize.height = window.innerHeight;
     this.sizeCanvas.width = this.windowSize.width * this.screensMultiplier.width;
-    this.sizeCanvas.height =this.windowSize.height * this.screensMultiplier.height;
+    this.sizeCanvas.height = this.windowSize.height * this.screensMultiplier.height;
     this.canvas.nativeElement.width = this.sizeCanvas.width;
     this.canvas.nativeElement.height = this.sizeCanvas.height;
     this.center();
     addEventListener('touchstart', (e) => {
-      if(e.touches.length > 1) {
+      if (e.touches.length > 1) {
         this.prevMovement = new Point(
-          e.touches[e.touches.length-1].clientX,
-          e.touches[e.touches.length-1].clientY
+          e.touches[e.touches.length - 1].clientX,
+          e.touches[e.touches.length - 1].clientY
         );
       }
     });
     addEventListener('touchmove', (e) => {
-      if(e.touches.length > 1) {
+      if (e.touches.length > 1) {
         console.log('Doble Touch movement');
         const current = new Point(
-          e.touches[e.touches.length-1].clientX,
-          e.touches[e.touches.length-1].clientY
+          e.touches[e.touches.length - 1].clientX,
+          e.touches[e.touches.length - 1].clientY
         );
         const deltaX = current.x - this.prevMovement.x;
         const deltaY = current.y - this.prevMovement.y;
@@ -89,8 +89,8 @@ export class HomePage implements AfterViewInit{
 
   center() {
     this.canvasPosition = new Point(
-      this.windowSize.width/2 - this.sizeCanvas.width/2,
-      this.windowSize.height/2 - this.sizeCanvas.height/2
+      this.windowSize.width / 2 - this.sizeCanvas.width / 2,
+      this.windowSize.height / 2 - this.sizeCanvas.height / 2
     );
   }
 
@@ -107,11 +107,11 @@ export class HomePage implements AfterViewInit{
           role: 'confirm',
           handler: (evt) => {
             const width = parseFloat(evt.width);
-            if(width > 0) {
+            if (width > 0) {
               localStorage.setItem('-CFG-CUSTOM-W', width.toString());
             }
             const height = parseFloat(evt.height);
-            if(height > 0) {
+            if (height > 0) {
               localStorage.setItem('-CFG-CUSTOM-H', height.toString());
             }
           }
@@ -127,6 +127,41 @@ export class HomePage implements AfterViewInit{
           placeholder: 'Height (screens)',
           name: 'height',
           value: this.screensMultiplier.height
+        },
+      ],
+    });
+    alert.present();
+  }
+
+  async brushSize() {
+    const alert = await this.alertController.create({
+      header: 'Please enter the fiber size',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'Save',
+          role: 'confirm',
+          handler: (evt) => {
+            if(evt.size) {
+              const size = parseInt(evt.size, 10);
+              if(size) {
+                localStorage.setItem('-CFG-CUSTOM-L', size.toString());
+                this.whiteCanvasSrv.format({
+                  lineWidth: size
+                });
+              }
+            }
+          },
+        },
+      ],
+      inputs: [
+        {
+          placeholder: 'Size',
+          name: 'size',
+          value: this.lineWidth
         },
       ],
     });
@@ -158,8 +193,8 @@ export class HomePage implements AfterViewInit{
           text: 'Save',
           role: 'confirm',
           handler: (evt) => {
-            if(evt.name) {
-              if(localStorage.getItem(evt.name)) {
+            if (evt.name) {
+              if (localStorage.getItem(evt.name)) {
                 // ya existe
                 this.alertController.create({
                   header: 'Are you sure to replace a previos document?',
@@ -206,8 +241,8 @@ export class HomePage implements AfterViewInit{
           text: 'Load',
           role: 'confirm',
           handler: (evt) => {
-            if(evt.name) {
-              if(!localStorage.getItem(evt.name)) {
+            if (evt.name) {
+              if (!localStorage.getItem(evt.name)) {
                 // ya existe
                 this.alertController.create({
                   header: 'File doesn`t exists',
