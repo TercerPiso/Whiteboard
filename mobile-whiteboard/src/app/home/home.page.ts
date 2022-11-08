@@ -24,7 +24,7 @@ export class HomePage implements AfterViewInit{
 
   ngAfterViewInit(): void {
     this.canvas.nativeElement.width = window.innerWidth;
-    this.canvas.nativeElement.height = window.innerHeight;
+    this.canvas.nativeElement.height = window.innerHeight - 5;
     addEventListener('touchmove', (e) => {
       this.mousePosition = new Point(
         e.touches[0].clientX - this.canvas.nativeElement.getBoundingClientRect().left,
