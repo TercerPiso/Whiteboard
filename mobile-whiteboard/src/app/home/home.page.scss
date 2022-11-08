@@ -1,0 +1,9 @@
+.clearArea {
+  background: transparent;
+  box-shadow: inset 0px 0px var(--shadoWidth) rgb(0 0 0 / 30%);
+  border: 1px solid gray;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  border-radius: 50%;
+}

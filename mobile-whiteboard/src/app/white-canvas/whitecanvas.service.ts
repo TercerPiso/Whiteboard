@@ -40,6 +40,15 @@ export class WhitecanvasService {
     this.canvas.addEventListener('touchcancel', (e) => this.process(MouseActions.OUT, e));
   }
 
+  public format(fmt: { lineWidth?: number; stroke?: string }) {
+    if(fmt.lineWidth !== undefined) {
+      this.lineWidth = fmt.lineWidth;
+    }
+    if(fmt.stroke !== undefined) {
+      this.stroke = fmt.stroke;
+    }
+  }
+
   public changeMode(mode: PenModes) {
     this.mode = mode;
   }
@@ -101,8 +110,8 @@ export class WhitecanvasService {
 
   private clear() {
     this.context.beginPath();
-    this.fillStyle = 'white';
-    this.context.arc(this.currentPosition.x, this.currentPosition.y, (this.lineWidth * 2), 0, 2 * Math.PI, false);
+    this.context.fillStyle = 'white';
+    this.context.arc(this.currentPosition.x, this.currentPosition.y, (this.lineWidth * 8), 0, 2 * Math.PI, false);
     this.context.fill();
   }
 

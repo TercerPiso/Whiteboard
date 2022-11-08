@@ -8,4 +8,30 @@
 
 <ion-content [fullscreen]="true">
   <canvas #canvas></canvas>
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button>
+      <ion-icon name="pencil-outline" *ngIf="mode === 'PAINT'"></ion-icon>
+      <ion-icon name="ellipse" *ngIf="mode === 'CLEAR'"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="start">
+      <ion-fab-button (click)="changeMode('PAINT')">
+        <ion-icon name="pencil-outline"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="changeMode('CLEAR')">
+        <ion-icon name="ellipse"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button>
+        <ion-icon name="color-palette"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+
+  <div class="clearArea"
+      *ngIf="mode === 'CLEAR'"
+      [style.width]="lineWidth*17 + 'px'"
+      [style.height]="lineWidth*17 + 'px'"
+      [style.--shadoWidth]="lineWidth*8 + 'px'"
+      [style.top]="mousePosition.y - 2 + 'px'"
+      [style.left]="mousePosition.x - (lineWidth*8.5) + 'px'"
+  ></div>
 </ion-content>

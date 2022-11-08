@@ -21,6 +21,6 @@ export enum MouseActions {
 }
 
 export enum PenModes {
-  PAINT,
-  CLEAR
+  PAINT = 'PAINT',
+  CLEAR = 'CLEAR'
 }
