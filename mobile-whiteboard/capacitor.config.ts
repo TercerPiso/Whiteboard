@@ -1,8 +1,8 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'mobile-whiteboard',
+  appId: 'net.tercerpiso.whiteboard',
+  appName: 'Whiteboard',
   webDir: 'www',
   bundledWebRuntime: false
 };
