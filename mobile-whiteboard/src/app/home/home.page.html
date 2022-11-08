@@ -1,37 +1,61 @@
-<ion-header [translucent]="true">
+<!-- <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
       Prototype
     </ion-title>
   </ion-toolbar>
-</ion-header>
+</ion-header> -->
 
 <ion-content [fullscreen]="true">
   <canvas #canvas></canvas>
+
+  <ion-fab slot="fixed" vertical="top" horizontal="end">
+    <ion-fab-button>
+      <ion-icon name="save"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="start">
+      <ion-fab-button (click)="load()">
+        <ion-icon name="folder-open"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="save()">
+        <ion-icon name="save"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="trash()">
+        <ion-icon name="trash" color="danger"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button>
-      <ion-icon name="pencil-outline" *ngIf="mode === 'PAINT'"></ion-icon>
+      <ion-icon name="pencil" *ngIf="mode === 'PAINT'"></ion-icon>
       <ion-icon name="ellipse" *ngIf="mode === 'CLEAR'"></ion-icon>
     </ion-fab-button>
     <ion-fab-list side="start">
-      <ion-fab-button (click)="changeMode('PAINT')">
-        <ion-icon name="pencil-outline"></ion-icon>
+      <ion-fab-button (click)="paint(0,0,0)">
+        <ion-icon name="pencil"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="paint(215,10,10)">
+        <ion-icon name="pencil" class="red"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="paint(0,97,30)">
+        <ion-icon name="pencil" class="green"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="paint(2,48,144)">
+        <ion-icon name="pencil" class="blue"></ion-icon>
       </ion-fab-button>
       <ion-fab-button (click)="changeMode('CLEAR')">
         <ion-icon name="ellipse"></ion-icon>
-      </ion-fab-button>
-      <ion-fab-button>
-        <ion-icon name="color-palette"></ion-icon>
       </ion-fab-button>
     </ion-fab-list>
   </ion-fab>
 
   <div class="clearArea"
       *ngIf="mode === 'CLEAR'"
-      [style.width]="lineWidth*17 + 'px'"
-      [style.height]="lineWidth*17 + 'px'"
-      [style.--shadoWidth]="lineWidth*8 + 'px'"
-      [style.top]="mousePosition.y - 2 + 'px'"
-      [style.left]="mousePosition.x - (lineWidth*8.5) + 'px'"
+      [style.width]="lineWidth*24 + 'px'"
+      [style.height]="lineWidth*24 + 'px'"
+      [style.--shadoWidth]="lineWidth*12 + 'px'"
+      [style.top]="mousePosition.y - (lineWidth*6) + 'px'"
+      [style.left]="mousePosition.x - (lineWidth*12) + 'px'"
   ></div>
 </ion-content>

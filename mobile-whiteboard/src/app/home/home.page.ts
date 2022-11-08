@@ -1,6 +1,8 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { PenRgb } from './../white-canvas/objects';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { PenModes, Point } from '../white-canvas/objects';
 import { WhitecanvasService } from '../white-canvas/whitecanvas.service';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
@@ -13,15 +15,16 @@ export class HomePage implements AfterViewInit{
   @ViewChild('content') content: ElementRef<HTMLImageElement>;
 
   public mode: PenModes = PenModes.PAINT;
-  public stroke = '#000000';
+  public stroke = new PenRgb(0,0,0);
   public lineWidth = 6;
   public mousePosition: Point = new Point();
 
-  constructor(private readonly whiteCanvasSrv: WhitecanvasService) {}
+  constructor(private readonly whiteCanvasSrv: WhitecanvasService,
+              private readonly alertController: AlertController) {}
 
   ngAfterViewInit(): void {
     this.canvas.nativeElement.width = window.innerWidth;
-    this.canvas.nativeElement.height = window.innerHeight - 50;
+    this.canvas.nativeElement.height = window.innerHeight;
     addEventListener('touchmove', (e) => {
       this.mousePosition = new Point(
         e.touches[0].clientX - this.canvas.nativeElement.getBoundingClientRect().left,
@@ -45,6 +48,85 @@ export class HomePage implements AfterViewInit{
     console.log('Changing mode to ', mode);
     this.whiteCanvasSrv.changeMode(mode);
     this.mode = mode;
+  }
+
+  paint(red: number, green: number, blue: number) {
+    this.changeMode('PAINT');
+    this.whiteCanvasSrv.format({
+      stroke: new PenRgb(red, green, blue)
+    });
+  }
+
+  async save() {
+    const alert = await this.alertController.create({
+      header: 'Please enter the name',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'Save',
+          role: 'confirm',
+          handler: (evt) => {
+            if(evt.name) {
+              if(localStorage.getItem(evt.name)) {
+                // ya existe
+                this.alertController.create({
+                  header: 'Are you sure to replace a previos document?',
+                  buttons: [
+                    {
+                      text: 'Cancel',
+                      role: 'cancel',
+                    },
+                    {
+                      text: 'OK',
+                      role: 'confirm',
+                      handler: () => {
+                        localStorage.setItem(evt.name, this.whiteCanvasSrv.save());
+                      },
+                    },
+                  ],
+                }).then(d => d.present());
+              } else {
+                localStorage.setItem(evt.name, this.whiteCanvasSrv.save());
+              }
+            }
+          },
+        },
+      ],
+      inputs: [
+        {
+          placeholder: 'Name',
+          name: 'name'
+        },
+      ],
+    });
+    alert.present();
+  }
+
+  load() {
+
+  }
+
+  async trash() {
+    const alert = await this.alertController.create({
+      header: 'Are you sure to clear all?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'OK',
+          role: 'confirm',
+          handler: () => {
+            this.whiteCanvasSrv.erease();
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 
 }

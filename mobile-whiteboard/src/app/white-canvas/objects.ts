@@ -24,3 +24,23 @@ export enum PenModes {
   PAINT = 'PAINT',
   CLEAR = 'CLEAR'
 }
+
+export class PenRgb {
+  public red: number;
+  public green: number;
+  public blue: number;
+
+  constructor(r: number, g: number, b: number) {
+    this.red = r;
+    this.green = g;
+    this.blue = b;
+  }
+
+  getRGBA(alpha: number) {
+    return `rgba(${this.red}, ${this.green}, ${this.blue}, ${alpha})`;
+  }
+
+  getRGB() {
+    return `rgba(${this.red}, ${this.green}, ${this.blue})`;
+  }
+}

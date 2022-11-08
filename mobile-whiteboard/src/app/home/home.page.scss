@@ -7,3 +7,24 @@
   left: 0px;
   border-radius: 50%;
 }
+
+ion-icon{
+  &.red{
+    color: red;
+  }
+  &.green{
+    color: green;
+  }
+  &.blue{
+    color: blue;
+  }
+}
+
+ion-content {
+  --offset-bottom: auto!important;
+  --overflow: hidden;
+  overflow: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

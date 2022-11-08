@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MouseActions, PenModes, Point } from './objects';
+import { MouseActions, PenModes, PenRgb, Point } from './objects';
 
 // an adaptation of this answer: https://stackoverflow.com/questions/2368784/draw-on-html5-canvas-using-a-mouse
 
@@ -18,7 +18,7 @@ export class WhitecanvasService {
   private dotFlag = false;
 
   private fillStyle = 'black';
-  private stroke = '#000000';
+  private stroke = new PenRgb(0,0,0);
   private lineWidth = 2;
 
   private mode = PenModes.PAINT;
@@ -36,7 +36,7 @@ export class WhitecanvasService {
     this.canvas.addEventListener('touchcancel', (e) => this.process(MouseActions.OUT, e));
   }
 
-  public format(fmt: { lineWidth?: number; stroke?: string }) {
+  public format(fmt: { lineWidth?: number; stroke?: PenRgb }) {
     if(fmt.lineWidth !== undefined) {
       this.lineWidth = fmt.lineWidth;
     }
@@ -50,9 +50,11 @@ export class WhitecanvasService {
   }
 
   public erease() {
-    if (confirm('Do you really want to clear all?')) {
-      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    }
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  public save() {
+    return this.canvas.toDataURL();
   }
 
   private process(action: MouseActions, event: TouchEvent) {
@@ -108,8 +110,8 @@ export class WhitecanvasService {
 
   private clear() {
     this.context.beginPath();
-    this.context.fillStyle = 'white';
-    this.context.arc(this.currentPosition.x, this.currentPosition.y, (this.lineWidth * 8), 0, 2 * Math.PI, false);
+    this.context.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    this.context.arc(this.currentPosition.x, this.currentPosition.y, (this.lineWidth * 12), 0, 2 * Math.PI, false);
     this.context.fill();
   }
 
@@ -124,14 +126,14 @@ export class WhitecanvasService {
     this.context.beginPath();
     this.context.moveTo(this.previousPosition.x, this.previousPosition.y);
     this.context.lineTo(this.currentPosition.x, this.currentPosition.y);
-    this.context.strokeStyle = this.stroke;
+    this.context.strokeStyle = this.stroke.getRGBA(0.75);
     this.context.lineWidth = this.lineWidth * force;
     this.context.stroke();
     this.context.closePath();
   }
 
-  // public save() {
-  //   const image = this.canvas.toDataURL();
-  // }
+  private getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 
 }
