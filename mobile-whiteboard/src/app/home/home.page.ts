@@ -19,13 +19,56 @@ export class HomePage implements AfterViewInit{
   public lineWidth = 6;
   public mousePosition: Point = new Point();
 
+  public canvasPosition: Point = new Point();
+  public prevMovement: Point = new Point();
+
+  public screensMultiplier = {
+    width: localStorage.getItem('-CFG-CUSTOM-W') ? parseFloat(localStorage.getItem('-CFG-CUSTOM-W')) : 1.5,
+    height: localStorage.getItem('-CFG-CUSTOM-H') ? parseFloat(localStorage.getItem('-CFG-CUSTOM-H')) : 2,
+  };
+
+  public sizeCanvas = {
+    width: 1,
+    height: 1,
+  };
+
+  public windowSize = {
+    width: 0,
+    height: 0
+  };
+
   constructor(private readonly whiteCanvasSrv: WhitecanvasService,
               private readonly alertController: AlertController) {}
 
   ngAfterViewInit(): void {
-    this.canvas.nativeElement.width = window.innerWidth;
-    this.canvas.nativeElement.height = window.innerHeight - 5;
+    this.windowSize.width = window.innerWidth;
+    this.windowSize.height = window.innerHeight;
+    this.sizeCanvas.width = this.windowSize.width * this.screensMultiplier.width;
+    this.sizeCanvas.height =this.windowSize.height * this.screensMultiplier.height;
+    this.canvas.nativeElement.width = this.sizeCanvas.width;
+    this.canvas.nativeElement.height = this.sizeCanvas.height;
+    this.center();
+    addEventListener('touchstart', (e) => {
+      if(e.touches.length > 1) {
+        this.prevMovement = new Point(
+          e.touches[e.touches.length-1].clientX,
+          e.touches[e.touches.length-1].clientY
+        );
+      }
+    });
     addEventListener('touchmove', (e) => {
+      if(e.touches.length > 1) {
+        console.log('Doble Touch movement');
+        const current = new Point(
+          e.touches[e.touches.length-1].clientX,
+          e.touches[e.touches.length-1].clientY
+        );
+        const deltaX = current.x - this.prevMovement.x;
+        const deltaY = current.y - this.prevMovement.y;
+        this.canvasPosition.x += deltaX;
+        this.canvasPosition.y += deltaY;
+        this.prevMovement = current;
+      }
       this.mousePosition = new Point(
         e.touches[0].clientX - this.canvas.nativeElement.getBoundingClientRect().left,
         e.touches[0].clientY - this.canvas.nativeElement.getBoundingClientRect().top
@@ -42,6 +85,52 @@ export class HomePage implements AfterViewInit{
       lineWidth: this.lineWidth,
       stroke: this.stroke
     });
+  }
+
+  center() {
+    this.canvasPosition = new Point(
+      this.windowSize.width/2 - this.sizeCanvas.width/2,
+      this.windowSize.height/2 - this.sizeCanvas.height/2
+    );
+  }
+
+  async expand() {
+    const alert = await this.alertController.create({
+      header: 'Size of screen (restart needed)',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'Save',
+          role: 'confirm',
+          handler: (evt) => {
+            const width = parseFloat(evt.width);
+            if(width > 0) {
+              localStorage.setItem('-CFG-CUSTOM-W', width.toString());
+            }
+            const height = parseFloat(evt.height);
+            if(height > 0) {
+              localStorage.setItem('-CFG-CUSTOM-H', height.toString());
+            }
+          }
+        }
+      ],
+      inputs: [
+        {
+          placeholder: 'Width (screens)',
+          name: 'width',
+          value: this.screensMultiplier.width
+        },
+        {
+          placeholder: 'Height (screens)',
+          name: 'height',
+          value: this.screensMultiplier.height
+        },
+      ],
+    });
+    alert.present();
   }
 
   changeMode(mode: any) {

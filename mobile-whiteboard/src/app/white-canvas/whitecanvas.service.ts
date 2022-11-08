@@ -67,6 +67,9 @@ export class WhitecanvasService {
   }
 
   private process(action: MouseActions, event: TouchEvent) {
+    if(event.touches.length > 1) {
+      return;
+    }
     if (action === MouseActions.DOWN) {
       this.startPath({
         x: event.touches[0].clientX,

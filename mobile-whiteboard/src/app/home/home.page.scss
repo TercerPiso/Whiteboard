@@ -6,10 +6,12 @@
   top: 0px;
   left: 0px;
   border-radius: 50%;
+  pointer-events: none;
 }
 
 canvas {
   background-color: white;
+  position: fixed;
 }
 
 ion-icon{
