@@ -8,6 +8,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { AuthService } from './auth/auth.service';
 import { DataModule } from './data/data.module';
 import { AuthModule } from './auth/auth.module';
+import { FileManagerModule } from './file-manager/file-manager.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AuthModule } from './auth/auth.module';
     DataModule,
     AppleLoginModule,
     AuthModule,
+    FileManagerModule,
   ],
   controllers: [],
   providers: [JwtStrategy],
