@@ -1,4 +1,4 @@
-import { FolderRepository } from './folders/file.repository';
+import { FolderRepository } from './folders/folder.repository';
 import { FileRepository } from './files/file.repository';
 import { Folder } from './folders/folder.entity';
 import { WBFile } from './files/file.entity';
