@@ -176,6 +176,7 @@ export class HomePage implements AfterViewInit {
                 this.whiteCanvasSrv.format({
                   lineWidth: size
                 });
+                this.lineWidth = size;
               }
             }
           },
