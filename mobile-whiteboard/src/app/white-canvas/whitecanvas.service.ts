@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MouseActions, PenModes, PenRgb, Point } from './objects';
+import { MouseActions, PenModes, PenRgb, Point, Size } from './objects';
 
 // an adaptation of this answer: https://stackoverflow.com/questions/2368784/draw-on-html5-canvas-using-a-mouse
 
@@ -10,6 +10,8 @@ export class WhitecanvasService {
 
   private context: CanvasRenderingContext2D;
   private canvas: HTMLCanvasElement;
+  private windowContext?: CanvasRenderingContext2D;
+  private window?: HTMLCanvasElement;
 
   private currentPosition: Point = new Point();
   private previousPosition: Point = new Point();
@@ -24,17 +26,26 @@ export class WhitecanvasService {
   private mode = PenModes.PAINT;
   private forceEnabled = false;
 
+  private canvasPosition: Point = new Point();
+  private prevMovement: Point = new Point();
+
   constructor() { }
 
-  public initCanvas(element: HTMLCanvasElement) {
-    this.canvas = element;
-    this.context = element.getContext('2d');
+  public initCanvas(canvas: HTMLCanvasElement, window?: HTMLCanvasElement) {
+    this.canvas = canvas;
+    this.context = canvas.getContext('2d');
     // touch events
-    this.canvas.addEventListener('touchmove', (e) => this.process(MouseActions.MOVE, e));
-    this.canvas.addEventListener('touchstart', (e) => this.process(MouseActions.DOWN, e));
-    this.canvas.addEventListener('touchend', (e) => this.process(MouseActions.UP, e));
-    this.canvas.addEventListener('touchleave', (e: TouchEvent) => this.process(MouseActions.OUT, e));
-    this.canvas.addEventListener('touchcancel', (e) => this.process(MouseActions.OUT, e));
+    this.window = window ? window : canvas;
+    this.window.addEventListener('touchmove', (e) => this.process(MouseActions.MOVE, e));
+    this.window.addEventListener('touchstart', (e) => this.process(MouseActions.DOWN, e));
+    this.window.addEventListener('touchend', (e) => this.process(MouseActions.UP, e));
+    this.window.addEventListener('touchleave', (e: TouchEvent) => this.process(MouseActions.OUT, e));
+    this.window.addEventListener('touchcancel', (e) => this.process(MouseActions.OUT, e));
+    this.erease();
+    if(this.window) {
+      this.windowContext = window.getContext('2d');
+      this.centerWindow();
+    }
   }
 
   public format(fmt: { lineWidth?: number; stroke?: PenRgb }) {
@@ -52,6 +63,8 @@ export class WhitecanvasService {
 
   public erease() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.context.fillStyle = 'white';
+    this.context.fillRect(0,0, this.canvas.width, this.canvas.height);
   }
 
   public save() {
@@ -66,27 +79,57 @@ export class WhitecanvasService {
     img.src = dataURL;
   }
 
+  public centerWindow() {
+    this.canvasPosition = new Point(
+      this.canvas.width / 2,
+      this.canvas.height / 2
+    );
+    this.drawOnWindow();
+  }
+
   private process(action: MouseActions, event: TouchEvent) {
     event.preventDefault();
-    console.log(event);
-    if(event.touches.length > 1) {
-      return;
-    }
+    // Movements
     if (action === MouseActions.DOWN) {
-      this.startPath({
-        x: event.touches[0].clientX,
-        y: event.touches[0].clientY
-      },
-      this.forceEnabled ? event.touches[0].force : 1);
+      // movement
+      if (event.touches.length > 1 || event.shiftKey) {
+        console.log('Start movement');
+        this.prevMovement = new Point(
+          event.touches[event.touches.length - 1].clientX,
+          event.touches[event.touches.length - 1].clientY
+        );
+      } else { // draw
+        console.log('start draw');
+        this.startPath(new Point(
+          event.touches[0].clientX,
+          event.touches[0].clientY
+        ),
+        this.forceEnabled ? event.touches[0].force : 1);
+      }
     } else if (action === MouseActions.MOVE) {
-      this.updatePath({
-        x: event.touches[0].clientX,
-        y: event.touches[0].clientY
-      },
-      this.forceEnabled ? event.touches[0].force : 1);
+      // movement
+      if (event.touches.length > 1 || event.shiftKey) {
+        const current = new Point(
+          event.touches[event.touches.length - 1].clientX,
+          event.touches[event.touches.length - 1].clientY
+        );
+        const deltaX = this.prevMovement.x - current.x;
+        const deltaY = this.prevMovement.y - current.y;
+        this.canvasPosition.x += deltaX;
+        this.canvasPosition.y += deltaY;
+        this.prevMovement = current;
+      } else {
+        // draw
+        this.updatePath(new Point(
+          event.touches[0].clientX,
+          event.touches[0].clientY
+        ),
+        this.forceEnabled ? event.touches[0].force : 1);
+      }
     } else if (action === MouseActions.UP || action === MouseActions.OUT) {
       this.flag = false;
     }
+    this.drawOnWindow();
   }
 
   private startPath(client: Point, force: number) {
@@ -132,22 +175,37 @@ export class WhitecanvasService {
   private startDraw() {
     this.context.beginPath();
     this.context.fillStyle = this.fillStyle;
-    this.context.fillRect(this.currentPosition.x, this.currentPosition.y, 2, 2);
+    const drawPoint = this.getDrawPoint();
+    this.context.fillRect(this.currentPosition.x + drawPoint.x, this.currentPosition.y + drawPoint.y, 2, 2);
     this.context.closePath();
   }
 
   private draw(force: number) {
     this.context.beginPath();
-    this.context.moveTo(this.previousPosition.x, this.previousPosition.y);
-    this.context.lineTo(this.currentPosition.x, this.currentPosition.y);
+    const drawPoint = this.getDrawPoint();
+    this.context.moveTo(this.previousPosition.x + drawPoint.x, this.previousPosition.y + drawPoint.y);
+    this.context.lineTo(this.currentPosition.x + drawPoint.x, this.currentPosition.y + drawPoint.y);
     this.context.strokeStyle = this.stroke.getRGBA(0.75);
     this.context.lineWidth = this.lineWidth * force;
     this.context.stroke();
     this.context.closePath();
   }
 
-  private getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  private drawOnWindow() {
+    if(!this.window) {
+      return;
+    }
+    const drawPoint = this.getDrawPoint();
+    const imageData = this.context.getImageData(drawPoint.x, drawPoint.y, this.window.width, this.window.height);
+    this.windowContext.putImageData(imageData, 0, 0);
+  }
+
+  private getDrawPoint() {
+    const halfWindow = new Point(
+      this.window.width / 2,
+      this.window.height / 2
+    );
+    return this.canvasPosition.substract(halfWindow);
   }
 
 }

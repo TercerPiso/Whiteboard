@@ -11,6 +11,27 @@ export class Point {
       this.y = y;
     }
   }
+
+  substract(point: Point): Point {
+    const nPoint = Object.assign(new Point(), this);
+    nPoint.x -= point.x;
+    nPoint.y -= point.y;
+    return nPoint;
+  }
+}
+
+export class Size {
+  public width: number;
+  public height: number;
+
+  constructor(width?: number, height?: number) {
+    if(width !== undefined) {
+      this.width = width;
+    }
+    if(height !== undefined) {
+      this.height = height;
+    }
+  }
 }
 
 export enum MouseActions {

@@ -7,7 +7,8 @@
 </ion-header> -->
 
 <ion-content [fullscreen]="true">
-  <canvas #canvas [style.top]="canvasPosition.y + 'px'" [style.left]="canvasPosition.x + 'px'"></canvas>
+  <canvas #window></canvas>
+  <canvas #canvas style="display: none"></canvas>
 
   <ion-fab slot="fixed" vertical="bottom" horizontal="start">
     <ion-fab-button>

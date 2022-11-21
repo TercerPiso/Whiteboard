@@ -14,15 +14,12 @@ import { SaveComponent } from './save/save.component';
 export class HomePage implements AfterViewInit {
 
   @ViewChild('canvas') canvas: ElementRef<HTMLCanvasElement>;
+  @ViewChild('window') window: ElementRef<HTMLCanvasElement>;
   @ViewChild('content') content: ElementRef<HTMLImageElement>;
 
   public mode: PenModes = PenModes.PAINT;
   public stroke = new PenRgb(0, 0, 0);
   public lineWidth = localStorage.getItem('-CFG-CUSTOM-L') ? parseInt(localStorage.getItem('-CFG-CUSTOM-L'), 10) : 6;
-  public mousePosition: Point = new Point();
-
-  public canvasPosition: Point = new Point();
-  public prevMovement: Point = new Point();
 
   public screensMultiplier = {
     width: localStorage.getItem('-CFG-CUSTOM-W') ? parseFloat(localStorage.getItem('-CFG-CUSTOM-W')) : 1.5,
@@ -68,56 +65,18 @@ export class HomePage implements AfterViewInit {
   ngAfterViewInit(): void {
     this.windowSize.width = window.innerWidth;
     this.windowSize.height = window.innerHeight;
+    this.window.nativeElement.width = this.windowSize.width;
+    this.window.nativeElement.height = this.windowSize.height;
     this.sizeCanvas.width = this.windowSize.width * this.screensMultiplier.width;
     this.sizeCanvas.height = this.windowSize.height * this.screensMultiplier.height;
     this.canvas.nativeElement.width = this.sizeCanvas.width;
     this.canvas.nativeElement.height = this.sizeCanvas.height;
-    this.center();
-    addEventListener('touchstart', (e) => {
-      if (e.touches.length > 1 || e.shiftKey) {
-        this.prevMovement = new Point(
-          e.touches[e.touches.length - 1].clientX,
-          e.touches[e.touches.length - 1].clientY
-        );
-      }
-    }, {passive: false});
-    addEventListener('touchmove', (e) => {
-      if (e.touches.length > 1 || e.shiftKey) {
-        console.log('Doble Touch movement');
-        const current = new Point(
-          e.touches[e.touches.length - 1].clientX,
-          e.touches[e.touches.length - 1].clientY
-        );
-        const deltaX = current.x - this.prevMovement.x;
-        const deltaY = current.y - this.prevMovement.y;
-        this.canvasPosition.x += deltaX;
-        this.canvasPosition.y += deltaY;
-        this.prevMovement = current;
-      }
-      this.mousePosition = new Point(
-        e.touches[0].clientX - this.canvas.nativeElement.getBoundingClientRect().left,
-        e.touches[0].clientY - this.canvas.nativeElement.getBoundingClientRect().top
-      );
-    });
-    addEventListener('mousemove', (e) => {
-      this.mousePosition = new Point(
-        e.clientX,
-        e.clientY
-      );
-    });
-    this.whiteCanvasSrv.initCanvas(this.canvas.nativeElement);
+    this.whiteCanvasSrv.initCanvas(this.canvas.nativeElement, this.window.nativeElement);
     this.whiteCanvasSrv.format({
       lineWidth: this.lineWidth,
       stroke: this.stroke
     });
-    this.openSketch(false);
-  }
-
-  center() {
-    this.canvasPosition = new Point(
-      this.windowSize.width / 2 - this.sizeCanvas.width / 2,
-      this.windowSize.height / 2 - this.sizeCanvas.height / 2
-    );
+    // this.openSketch(false);
   }
 
   async expand() {
@@ -140,6 +99,7 @@ export class HomePage implements AfterViewInit {
             if (height > 0) {
               localStorage.setItem('-CFG-CUSTOM-H', height.toString());
             }
+            window.location.reload();
           }
         }
       ],
@@ -324,4 +284,7 @@ export class HomePage implements AfterViewInit {
     await alert.present();
   }
 
+  center() {
+    this.whiteCanvasSrv.centerWindow();
+  }
 }
