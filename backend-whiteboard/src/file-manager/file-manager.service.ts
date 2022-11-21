@@ -76,7 +76,16 @@ export class FileManagerService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    return await this.fileRepository.findByFolder(folderID);
+    const files = await this.fileRepository.findByFolder(folderID);
+    return files.map((file) => {
+      return {
+        _id: file._id,
+        crated: file.created,
+        updated: file.lastUpdate,
+        name: file.name,
+        preview: file.preview,
+      };
+    });
   }
 
   async createFileInFolder(userID: string, file: FileData) {
@@ -134,8 +143,20 @@ export class FileManagerService {
     }
     dbFile.fullFile = file.content;
     dbFile.preview = file.preview;
+    dbFile.lastUpdate = new Date();
     const savedFile = await this.fileRepository.save(dbFile);
     return { fileID: savedFile._id.toString() };
+  }
+
+  async getFile(userID: string, fileID: string) {
+    const dbFile = await this.fileRepository.findByID(fileID);
+    if (!dbFile) {
+      throw new HttpException(`File doesn't exists`, HttpStatus.NOT_FOUND);
+    }
+    if (dbFile.ownerID !== userID) {
+      throw new HttpException('This file is not yours', HttpStatus.BAD_REQUEST);
+    }
+    return dbFile;
   }
 
   async deleteFile(userID: string, fileID: string) {

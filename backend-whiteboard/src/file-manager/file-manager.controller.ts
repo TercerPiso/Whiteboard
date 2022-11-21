@@ -52,6 +52,12 @@ export class FileManagerController {
     return this.fmSrv.getFilesInFolder(req.user.userId, fid);
   }
 
+  @Get('file/:fid')
+  @UseGuards(JwtAuthGuard)
+  getFullFile(@Request() req, @Param('fid') fid: string) {
+    return this.fmSrv.getFile(req.user.userId, fid);
+  }
+
   @Post('files')
   @UseGuards(JwtAuthGuard)
   createFile(@Request() req, @Body() fileData: FileData) {

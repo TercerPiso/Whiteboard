@@ -22,4 +22,7 @@ export class WBFile {
 
   @Column()
   created: Date;
+
+  @Column()
+  lastUpdate: Date;
 }
