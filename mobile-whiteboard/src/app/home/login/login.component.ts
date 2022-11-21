@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
       console.log(res);
     })
     .catch((error: AppleSignInErrorResponse) => {
-      alert(error.code + ' ' + error.localizedDescription);
+      alert('Error: ' + error.code);
       console.error(error);
     });
   }
