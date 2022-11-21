@@ -1,4 +1,4 @@
-import { FileData, FolderOutput, TFile } from './../../fileserver/pojos';
+import { FileData, FolderOutput, TFile, FilesOutput } from './../../fileserver/pojos';
 import { Component, OnInit } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular';
 import { FileserverService } from 'src/app/fileserver/fileserver.service';
@@ -11,7 +11,7 @@ import { FileserverService } from 'src/app/fileserver/fileserver.service';
 export class DocumentsComponent implements OnInit {
 
   public folders: FolderOutput[];
-  public filesInfolder: TFile[];
+  public filesInfolder: FilesOutput[];
   public folderSelectedID?: string;
 
   constructor(private readonly modal: ModalController,
@@ -19,6 +19,7 @@ export class DocumentsComponent implements OnInit {
               private readonly alertController: AlertController) { }
 
   ngOnInit() {
+    // TODO: spinner loading
     this.fsSrv.getFolders().subscribe(d => {
       this.folders = d;
     }, e => {
@@ -30,7 +31,14 @@ export class DocumentsComponent implements OnInit {
 
   selectFolder(id: string) {
     this.folderSelectedID = id;
-    this.filesInfolder = this.fsSrv.getFolderContent(id);
+    // TODO: spinner loading
+    this.fsSrv.getFolderContent(id).subscribe(d => {
+      this.filesInfolder = d;
+    }, e => {
+      // TODO
+      alert('ERROR');
+      console.error(e);
+    });
   }
 
   cancel() {
@@ -44,7 +52,7 @@ export class DocumentsComponent implements OnInit {
   }
 
   async newFolder() {
-    const alert = await this.alertController.create({
+    const alertObj = await this.alertController.create({
       header: 'Folder name',
       buttons: [
         {
@@ -56,7 +64,14 @@ export class DocumentsComponent implements OnInit {
           role: 'confirm',
           handler: (evt) => {
             const name = evt.fname.trim();
-            this.fsSrv.addFolder(name);
+            // TODO: loading
+            this.fsSrv.addFolder(name).subscribe(d => {
+              // TODO: reload folders
+            }, e => {
+              // TODO
+              alert('error');
+              console.error(e);
+            });
           }
         }
       ],
@@ -67,11 +82,11 @@ export class DocumentsComponent implements OnInit {
         },
       ],
     });
-    alert.present();
+    alertObj.present();
   }
 
   async newFile(folderID: string) {
-    const alert = await this.alertController.create({
+    const alertObj = await this.alertController.create({
       header: 'File name',
       buttons: [
         {
@@ -83,8 +98,14 @@ export class DocumentsComponent implements OnInit {
           role: 'confirm',
           handler: (evt) => {
             const name = evt.fname.trim();
-            const fileID = this.fsSrv.saveFile(folderID, name, new FileData());
-            this.confirm(fileID);
+            // TODO: loading
+            this.fsSrv.saveFile(folderID, name, new FileData()).subscribe(d => {
+              this.confirm(d.fileID);
+            }, e => {
+              // TODO
+              alert('error');
+              console.error(e);
+            });
           }
         }
       ],
@@ -95,14 +116,16 @@ export class DocumentsComponent implements OnInit {
         },
       ],
     });
-    alert.present();
+    alertObj.present();
   }
 
   removeFolder(folderID: string) {
+    // TODO: loading and reload list
     this.fsSrv.removeFolder(folderID);
   }
 
   removeFile(fileID: string) {
+    // TODO: loading and reload list
     this.fsSrv.removeFile(fileID);
   }
 

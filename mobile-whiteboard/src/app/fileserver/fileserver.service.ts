@@ -47,7 +47,7 @@ export class FileserverService {
   }
 
   saveFile(folderID: string, name: string, content: FileData) {
-    return this.httpClient.post(`${environment.api}/file-manager/files`, {
+    return this.httpClient.post<{fileID: string}>(`${environment.api}/file-manager/files`, {
       name,
       folderID,
       content: content.file,
