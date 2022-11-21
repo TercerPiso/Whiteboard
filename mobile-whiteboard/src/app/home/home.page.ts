@@ -19,10 +19,10 @@ export class HomePage implements AfterViewInit {
 
   public mode: PenModes = PenModes.PAINT;
   public stroke = new PenRgb(0, 0, 0);
-  public lineWidth = localStorage.getItem('-CFG-CUSTOM-L') ? parseInt(localStorage.getItem('-CFG-CUSTOM-L'), 10) : 6;
+  public lineWidth = localStorage.getItem('-CFG-CUSTOM-L') ? parseInt(localStorage.getItem('-CFG-CUSTOM-L'), 10) : 5;
 
   public screensMultiplier = {
-    width: localStorage.getItem('-CFG-CUSTOM-W') ? parseFloat(localStorage.getItem('-CFG-CUSTOM-W')) : 1.5,
+    width: localStorage.getItem('-CFG-CUSTOM-W') ? parseFloat(localStorage.getItem('-CFG-CUSTOM-W')) : 2,
     height: localStorage.getItem('-CFG-CUSTOM-H') ? parseFloat(localStorage.getItem('-CFG-CUSTOM-H')) : 2,
   };
 
