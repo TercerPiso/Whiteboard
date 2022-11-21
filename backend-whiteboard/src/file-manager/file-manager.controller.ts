@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Request } from '@nestjs/common';
-import { FolderInput } from './file-manager.domain';
+import { FileData, FolderInput } from './file-manager.domain';
 
 @Controller('file-manager')
 export class FileManagerController {
@@ -44,5 +44,33 @@ export class FileManagerController {
   deleteFolder(@Request() req, @Param('id') fid: string) {
     // TODO: remove files in folder
     return this.fmSrv.deleteFolder(req.user.userId, fid);
+  }
+
+  @Get('files/:fid')
+  @UseGuards(JwtAuthGuard)
+  getFiles(@Request() req, @Param('fid') fid: string) {
+    return this.fmSrv.getFilesInFolder(req.user.userId, fid);
+  }
+
+  @Post('files')
+  @UseGuards(JwtAuthGuard)
+  createFile(@Request() req, @Body() fileData: FileData) {
+    return this.fmSrv.createFileInFolder(req.user.userId, fileData);
+  }
+
+  @Put('files/:fid')
+  @UseGuards(JwtAuthGuard)
+  updateFile(
+    @Request() req,
+    @Param('fid') fid: string,
+    @Body() fileData: FileData,
+  ) {
+    return this.fmSrv.updateFile(req.user.userId, fid, fileData);
+  }
+
+  @Delete('files/:fid')
+  @UseGuards(JwtAuthGuard)
+  deleteFile(@Request() req, @Param('fid') fid: string) {
+    return this.fmSrv.deleteFile(req.user.userId, fid);
   }
 }

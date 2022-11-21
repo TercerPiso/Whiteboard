@@ -2,6 +2,7 @@ import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as mongodb from 'mongodb';
 
 @Injectable()
 export class UserRepository {
@@ -17,6 +18,12 @@ export class UserRepository {
   public findByAppleID(appleID: string) {
     return this.userRepository.findOneBy({
       appleID,
+    });
+  }
+
+  public findByID(id: string) {
+    return this.userRepository.findOneByOrFail({
+      _id: new mongodb.ObjectID(id),
     });
   }
 }
