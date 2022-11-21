@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Folder } from './pojos';
+import { FileData, FileWithMeta, Folder } from './pojos';
 
 @Injectable({
   providedIn: 'root'
@@ -55,12 +55,12 @@ export class FileserverService {
     });
   }
 
-  saveFile(folderID: string, fileName: string, content: string) {
+  saveFile(folderID: string, fileName: string, content: FileData) {
     alert('Work in progress');
     return 'FILE-ID';
   }
 
-  saveWithID(fileID: string, content: string) {
+  saveWithID(fileID: string, content: FileData) {
     alert('Work in progress');
   }
 
@@ -80,4 +80,7 @@ export class FileserverService {
     this.folders.splice(idx, 1);
   }
 
+  getFileData(fileID: string): FileWithMeta {
+    return new FileWithMeta();
+  }
 }

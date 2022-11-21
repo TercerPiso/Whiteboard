@@ -59,7 +59,6 @@ export class SaveComponent implements OnInit {
       return;
     }
     if(this.openedFileID) {
-      console.log('Save on same file');
       // TODO: add content
       this.fsSrv.saveWithID(this.openedFileID, '');
       this.modal.dismiss({fileID: this.openedFileID}, 'confirm');
