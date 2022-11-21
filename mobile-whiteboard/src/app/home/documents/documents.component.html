@@ -30,12 +30,12 @@
           <ion-label>New folder</ion-label>
         </ion-item>
         <ion-item-sliding *ngFor="let folder of folders">
-          <ion-item (click)="selectFolder(folder.id)" [class.active]="folder.id === folderSelectedID">
+          <ion-item (click)="selectFolder(folder._id)" [class.active]="folder._id === folderSelectedID">
             <ion-icon name="folder-open" slot="start" color="primary"></ion-icon>
             <ion-label>{{folder.name}}</ion-label>
           </ion-item>
           <ion-item-options side="end">
-            <ion-item-option color="danger" (click)="removeFolder(folder.id)">Remove</ion-item-option>
+            <ion-item-option color="danger" (click)="removeFolder(folder._id)">Remove</ion-item-option>
           </ion-item-options>
         </ion-item-sliding>
       </ion-list>

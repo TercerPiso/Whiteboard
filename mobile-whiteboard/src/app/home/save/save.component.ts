@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular';
 import { FileserverService } from 'src/app/fileserver/fileserver.service';
-import { FileData, Folder } from 'src/app/fileserver/pojos';
+import { FileData, FolderOutput } from 'src/app/fileserver/pojos';
 
 @Component({
   selector: 'app-save',
@@ -11,7 +11,7 @@ import { FileData, Folder } from 'src/app/fileserver/pojos';
 export class SaveComponent implements OnInit {
 
   @Input() openedFileID?: string;
-  public folders: Folder[];
+  public folders: FolderOutput[];
   public selectedFolderID?: string;
 
   constructor(
@@ -21,7 +21,13 @@ export class SaveComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.folders = this.fsSrv.getFolders();
+    this.fsSrv.getFolders().subscribe(d => {
+      this.folders = d;
+    }, e => {
+      alert('error');
+      console.error(e);
+      // FIXME
+    });
   }
 
   cancel() {
@@ -71,6 +77,10 @@ export class SaveComponent implements OnInit {
 
   removeFolder(folderID: string) {
     this.fsSrv.removeFolder(folderID);
+  }
+
+  newFolder() {
+    // TODO
   }
 
 }

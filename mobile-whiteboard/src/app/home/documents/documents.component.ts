@@ -1,8 +1,7 @@
-import { FileData, TFile } from './../../fileserver/pojos';
+import { FileData, FolderOutput, TFile } from './../../fileserver/pojos';
 import { Component, OnInit } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular';
 import { FileserverService } from 'src/app/fileserver/fileserver.service';
-import { Folder } from 'src/app/fileserver/pojos';
 
 @Component({
   selector: 'app-documents',
@@ -11,7 +10,7 @@ import { Folder } from 'src/app/fileserver/pojos';
 })
 export class DocumentsComponent implements OnInit {
 
-  public folders: Folder[];
+  public folders: FolderOutput[];
   public filesInfolder: TFile[];
   public folderSelectedID?: string;
 
@@ -20,7 +19,13 @@ export class DocumentsComponent implements OnInit {
               private readonly alertController: AlertController) { }
 
   ngOnInit() {
-    this.folders = this.fsSrv.getFolders();
+    this.fsSrv.getFolders().subscribe(d => {
+      this.folders = d;
+    }, e => {
+      alert('error');
+      console.error(e);
+      // FIXME
+    });
   }
 
   selectFolder(id: string) {

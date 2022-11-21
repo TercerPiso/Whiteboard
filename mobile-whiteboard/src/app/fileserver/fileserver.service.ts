@@ -1,90 +1,114 @@
+import { environment } from './../../environments/environment';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { FileData, FileWithMeta, Folder } from './pojos';
+import { AppleSignInResponse } from '@awesome-cordova-plugins/sign-in-with-apple/ngx';
+import { ApiLoginOutput, FileData, FilesOutput, FileWithMeta, Folder, FolderOutput } from './pojos';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileserverService {
 
-  private folders: Folder[] = [
-    {
-      id: '0x000043',
-      name: 'Autosave',
-      files: [
-        {
-          id: '0x0123asd',
-          name: 'Last saved 21/11/22 11:19',
-          preview: 'https://i.imgur.com/OQI4Mvh.png'
-        },
-        {
-          id: '0x0123asd',
-          name: 'Saraza',
-          preview: 'https://i.imgur.com/OQI4Mvh.png'
-        }
-      ]
-    },
-    {
-      id: '0x000044',
-      name: 'Test',
-      files: [
-        {
-          id: '0x0123asd',
-          name: 'Testing',
-          preview: 'https://i.imgur.com/OQI4Mvh.png'
-        }
-      ]
-    }
-  ];
 
-  constructor() { }
+  constructor(private readonly httpClient: HttpClient) { }
+
+  doLogin(request: AppleSignInResponse): Observable<ApiLoginOutput> {
+    return this.httpClient.post<ApiLoginOutput>(`${environment.api}/apple-login`, request);
+  }
 
   getFolders() {
-    return this.folders;
+    return this.httpClient.get<FolderOutput[]>(`${environment.api}/file-manager/folders`, {
+      headers: {
+        authorization: `Bearer ${this.getSession()}`
+      }
+    });
   }
 
   getFolderContent(id: string) {
-    console.log(`Folder id ${id}`);
-    return this.folders.find(folder => folder.id === id).files;
-  }
-
-  addFolder(name: string) {
-    this.folders.push({
-      id: 'NewFolder' + this.folders.length,
-      name,
-      files: []
+    return this.httpClient.get<FilesOutput[]>(`${environment.api}/file-manager/files/${id}`,{
+      headers: {
+        authorization: `Bearer ${this.getSession()}`
+      }
     });
   }
 
-  saveFile(folderID: string, fileName: string, content: FileData) {
-    alert('Work in progress');
-    return 'FILE-ID';
+  addFolder(content: {name: string}) {
+    return this.httpClient.post<{
+      ownerID: string;
+      created: string;
+      name: string;
+      _id: string;
+    }>(`${environment.api}/file-manager/folders`, content, {
+      headers: {
+        authorization: `Bearer ${this.getSession()}`
+      }
+    });
+  }
+
+  saveFile(folderID: string, name: string, content: FileData) {
+    return this.httpClient.post(`${environment.api}/file-manager/files`, {
+      name,
+      folderID,
+      content: content.file,
+      preview: content.preview,
+    }, {
+      headers: {
+        authorization: `Bearer ${this.getSession()}`
+      }
+    });
   }
 
   saveWithID(fileID: string, content: FileData) {
-    alert('Work in progress');
+    return this.httpClient.post(`${environment.api}/file-manager/files/${fileID}`, {
+      content: content.file,
+      preview: content.preview,
+    }, {
+      headers: {
+        authorization: `Bearer ${this.getSession()}`
+      }
+    });
   }
 
   removeFile(fileID: string) {
-    let fileIdx = 0;
-    const folder = this.folders.find(f => {
-      fileIdx = f.files.findIndex(file => file.id === fileID);
-      return fileIdx >= 0;
+    return this.httpClient.delete(`${environment.api}/file-manager/files/${fileID}`, {
+      headers: {
+        authorization: `Bearer ${this.getSession()}`
+      }
     });
-    if(folder) {
-      folder.files.splice(fileIdx, 1);
-    }
   }
 
   removeFolder(folderID: string) {
-    const idx = this.folders.findIndex(f => f.id === folderID);
-    this.folders.splice(idx, 1);
+    return this.httpClient.delete(`${environment.api}/file-manager/folders/${folderID}`, {
+      headers: {
+        authorization: `Bearer ${this.getSession()}`
+      }
+    });
   }
 
-  getFileData(fileID: string): FileWithMeta {
-    return new FileWithMeta();
+  getFileData(fileID: string) {
+    // TODO
+    return this.httpClient.get<{
+      _id: string;
+      ownerID: string;
+      folderID: string;
+      preview: string;
+      fullFile: string;
+      name: string;
+      created: string;
+      lastUpdate: string;
+    }>(`${environment.api}/file-manager/file/${fileID}`, {
+      headers: {
+        authorization: `Bearer ${this.getSession()}`
+      }
+    });
   }
 
   getSession() {
     return localStorage.getItem('JWT');
+  }
+
+  setSession(jwt: string) {
+    return localStorage.setItem('JWT', jwt);
   }
 }
