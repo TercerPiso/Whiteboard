@@ -42,6 +42,7 @@ export class FileManagerController {
   @Delete('folders/:id')
   @UseGuards(JwtAuthGuard)
   deleteFolder(@Request() req, @Param('id') fid: string) {
+    // TODO: remove files in folder
     return this.fmSrv.deleteFolder(req.user.userId, fid);
   }
 }
