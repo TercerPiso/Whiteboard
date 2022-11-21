@@ -62,6 +62,7 @@ export class HomePage implements AfterViewInit {
     });
     modal.present();
     const { data, role } = await modal.onWillDismiss();
+    this.openedFileID = data?.fileID;
   }
 
   ngAfterViewInit(): void {
