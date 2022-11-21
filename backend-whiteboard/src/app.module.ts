@@ -6,18 +6,18 @@ import { environment } from './environment';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { AuthService } from './auth/auth.service';
+import { DataModule } from './data/data.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    AppleLoginModule,
     HttpModule,
     TypeOrmModule.forRoot(environment.db),
-    JwtModule.register({
-      secret: environment.JWT_SECRET,
-      signOptions: { expiresIn: '60s' },
-    }),
+    DataModule,
+    AppleLoginModule,
+    AuthModule,
   ],
   controllers: [],
-  providers: [AuthService, JwtStrategy],
+  providers: [JwtStrategy],
 })
 export class AppModule {}

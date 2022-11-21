@@ -1,4 +1,3 @@
-import { JWTPayload } from './../../node_modules/jose/dist/types/types.d';
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { AppleSignInResponse } from './apple-login.domain';
@@ -18,12 +17,12 @@ export class AppleLoginService {
 
   async validateToken(
     aps: AppleSignInResponse,
-  ): Promise<{ error: boolean; payload?: JWTPayload; message?: string }> {
+  ): Promise<{ error: boolean; payload?: jwt.JwtPayload; message?: string }> {
     const jwtRaw = jwt.decode(aps.identityToken, { complete: true });
     const kid = jwtRaw.header.kid;
     try {
       const appleKey = await this.getSigningKeys(kid);
-      const payload = jwt.verify(aps.identityToken, appleKey) as JWTPayload;
+      const payload = jwt.verify(aps.identityToken, appleKey) as jwt.JwtPayload;
       if (payload.aud !== this.AppID) {
         return { error: true, message: 'Invalid app id' };
       }

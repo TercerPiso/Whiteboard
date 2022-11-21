@@ -4,7 +4,7 @@ export const environment = {
     host: process.env.DB_HOST ? process.env.DB_HOST : 'localhost',
     port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 27018,
     username: process.env.DB_USERNAME ? process.env.DB_USERNAME : 'whiteboard',
-    password: process.env.DB_PASSWORD ? process.env.DB_PASSWORD : '1234567',
+    password: process.env.DB_PASSWORD ? process.env.DB_PASSWORD : '27365148',
     database: process.env.DB_NAME ? process.env.DB_NAME : 'whiteboard',
     entities: ['dist/**/*.entity{.ts,.js}'],
     // entities: ['src/**/*.entity{.ts,.js}'],
