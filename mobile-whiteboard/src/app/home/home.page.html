@@ -42,6 +42,9 @@
       <ion-fab-button (click)="expand()">
         <ion-icon name="expand"></ion-icon>
       </ion-fab-button>
+      <ion-fab-button (click)="zoomPopup()">
+        <ion-icon name="search"></ion-icon>
+      </ion-fab-button>
       <ion-fab-button (click)="brushSize()">
         <ion-icon name="brush"></ion-icon>
       </ion-fab-button>
@@ -79,7 +82,7 @@
       [style.width]="lineWidth*24 + 'px'"
       [style.height]="lineWidth*24 + 'px'"
       [style.--shadoWidth]="lineWidth*12 + 'px'"
-      [style.top]="mousePosition.y - (lineWidth*6) + 'px'"
+      [style.top]="mousePosition.y - (lineWidth*12) + 'px'"
       [style.left]="mousePosition.x - (lineWidth*12) + 'px'"
   ></div>
 </ion-content>

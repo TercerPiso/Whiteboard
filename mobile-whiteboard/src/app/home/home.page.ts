@@ -19,11 +19,12 @@ export class HomePage implements AfterViewInit {
 
   public mode: PenModes = PenModes.PAINT;
   public stroke = new PenRgb(0, 0, 0);
-  public lineWidth = localStorage.getItem('-CFG-CUSTOM-L') ? parseInt(localStorage.getItem('-CFG-CUSTOM-L'), 10) : 5;
+  public lineWidth = localStorage.getItem('-CFG-CUSTOM-L') ? parseInt(localStorage.getItem('-CFG-CUSTOM-L'), 10) : 2;
+  public zoom = localStorage.getItem('-CFG-CUSTOM-Z') ? parseInt(localStorage.getItem('-CFG-CUSTOM-Z'), 10) : 2;
 
   public screensMultiplier = {
-    width: localStorage.getItem('-CFG-CUSTOM-W') ? parseFloat(localStorage.getItem('-CFG-CUSTOM-W')) : 2,
-    height: localStorage.getItem('-CFG-CUSTOM-H') ? parseFloat(localStorage.getItem('-CFG-CUSTOM-H')) : 2,
+    width: localStorage.getItem('-CFG-CUSTOM-W') ? parseFloat(localStorage.getItem('-CFG-CUSTOM-W')) : 2.5,
+    height: localStorage.getItem('-CFG-CUSTOM-H') ? parseFloat(localStorage.getItem('-CFG-CUSTOM-H')) : 2.5,
   };
 
   public sizeCanvas = {
@@ -35,6 +36,8 @@ export class HomePage implements AfterViewInit {
     width: 0,
     height: 0
   };
+
+  public mousePosition = new Point();
 
   constructor(private readonly whiteCanvasSrv: WhitecanvasService,
               private readonly alertController: AlertController,
@@ -65,23 +68,27 @@ export class HomePage implements AfterViewInit {
   ngAfterViewInit(): void {
     this.windowSize.width = window.innerWidth;
     this.windowSize.height = window.innerHeight;
-    this.window.nativeElement.width = this.windowSize.width;
-    this.window.nativeElement.height = this.windowSize.height;
+    this.window.nativeElement.width = this.windowSize.width / this.zoom;
+    this.window.nativeElement.height = this.windowSize.height / this.zoom;
     this.sizeCanvas.width = this.windowSize.width * this.screensMultiplier.width;
     this.sizeCanvas.height = this.windowSize.height * this.screensMultiplier.height;
     this.canvas.nativeElement.width = this.sizeCanvas.width;
     this.canvas.nativeElement.height = this.sizeCanvas.height;
-    this.whiteCanvasSrv.initCanvas(this.canvas.nativeElement, this.window.nativeElement);
+    this.whiteCanvasSrv.initCanvas(this.canvas.nativeElement, this.window.nativeElement, this.zoom);
     this.whiteCanvasSrv.format({
       lineWidth: this.lineWidth,
       stroke: this.stroke
+    });
+    addEventListener('touchmove', (e) => {
+      this.mousePosition.x = e.touches[0].clientX;
+      this.mousePosition.y = e.touches[0].clientY;
     });
     // this.openSketch(false);
   }
 
   async expand() {
     const alert = await this.alertController.create({
-      header: 'Size of screen (restart needed)',
+      header: 'Size of screen (change this clear draw)',
       buttons: [
         {
           text: 'Cancel',
@@ -105,15 +112,46 @@ export class HomePage implements AfterViewInit {
       ],
       inputs: [
         {
-          placeholder: 'Width (screens)',
+          placeholder: 'Width screens (2.5)',
           name: 'width',
           value: this.screensMultiplier.width
         },
         {
-          placeholder: 'Height (screens)',
+          placeholder: 'Height screens (2.5)',
           name: 'height',
           value: this.screensMultiplier.height
         },
+      ],
+    });
+    alert.present();
+  }
+
+  async zoomPopup() {
+    const alert = await this.alertController.create({
+      header: 'Zoom (change this clear draw)',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'Save',
+          role: 'confirm',
+          handler: (evt) => {
+            const zoom = parseFloat(evt.zoom);
+            if (zoom > 0) {
+              localStorage.setItem('-CFG-CUSTOM-Z', zoom.toString());
+            }
+            window.location.reload();
+          }
+        }
+      ],
+      inputs: [
+        {
+          placeholder: 'Zoom (2)',
+          name: 'zoom',
+          value: this.zoom
+        }
       ],
     });
     alert.present();

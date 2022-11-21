@@ -18,6 +18,23 @@ export class Point {
     nPoint.y -= point.y;
     return nPoint;
   }
+
+  division(nro: number) {
+    const nPoint = Object.assign(new Point(), this);
+    if(nro <= 0) {
+      return nPoint;
+    }
+    nPoint.x = nPoint.x / nro;
+    nPoint.y = nPoint.y / nro;
+    return nPoint;
+  }
+
+  multiply(nro: number) {
+    const nPoint = Object.assign(new Point(), this);
+    nPoint.x = nPoint.x * nro;
+    nPoint.y = nPoint.y * nro;
+    return nPoint;
+  }
 }
 
 export class Size {

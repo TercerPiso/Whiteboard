@@ -29,9 +29,11 @@ export class WhitecanvasService {
   private canvasPosition: Point = new Point();
   private prevMovement: Point = new Point();
 
+  private zoom = 1;
+
   constructor() { }
 
-  public initCanvas(canvas: HTMLCanvasElement, window?: HTMLCanvasElement) {
+  public initCanvas(canvas: HTMLCanvasElement, window?: HTMLCanvasElement, zoom?: number) {
     this.canvas = canvas;
     this.context = canvas.getContext('2d');
     // touch events
@@ -42,6 +44,9 @@ export class WhitecanvasService {
     this.window.addEventListener('touchleave', (e: TouchEvent) => this.process(MouseActions.OUT, e));
     this.window.addEventListener('touchcancel', (e) => this.process(MouseActions.OUT, e));
     this.erease();
+    if(zoom) {
+      this.zoom = zoom;
+    }
     if(this.window) {
       this.windowContext = window.getContext('2d');
       this.centerWindow();
@@ -168,7 +173,15 @@ export class WhitecanvasService {
   private clear() {
     this.context.beginPath();
     this.context.fillStyle = 'rgba(255, 255, 255, 0.4)';
-    this.context.arc(this.currentPosition.x, this.currentPosition.y, (this.lineWidth * 12), 0, 2 * Math.PI, false);
+    const drawPoint = this.getDrawPoint();
+    this.context.arc(
+      this.currentPosition.division(this.zoom).x + drawPoint.x,
+      this.currentPosition.division(this.zoom).y + drawPoint.y,
+      (this.lineWidth * 12),
+      0,
+      2 * Math.PI,
+      false
+    );
     this.context.fill();
   }
 
@@ -176,15 +189,26 @@ export class WhitecanvasService {
     this.context.beginPath();
     this.context.fillStyle = this.fillStyle;
     const drawPoint = this.getDrawPoint();
-    this.context.fillRect(this.currentPosition.x + drawPoint.x, this.currentPosition.y + drawPoint.y, 2, 2);
+    this.context.fillRect(
+      this.currentPosition.division(this.zoom).x + drawPoint.x,
+      this.currentPosition.division(this.zoom).y + drawPoint.y,
+      2,
+      2
+    );
     this.context.closePath();
   }
 
   private draw(force: number) {
     this.context.beginPath();
     const drawPoint = this.getDrawPoint();
-    this.context.moveTo(this.previousPosition.x + drawPoint.x, this.previousPosition.y + drawPoint.y);
-    this.context.lineTo(this.currentPosition.x + drawPoint.x, this.currentPosition.y + drawPoint.y);
+    this.context.moveTo(
+      this.previousPosition.division(this.zoom).x + drawPoint.x,
+      this.previousPosition.division(this.zoom).y + drawPoint.y
+    );
+    this.context.lineTo(
+      this.currentPosition.division(this.zoom).x + drawPoint.x,
+      this.currentPosition.division(this.zoom).y + drawPoint.y
+    );
     this.context.strokeStyle = this.stroke.getRGBA(0.75);
     this.context.lineWidth = this.lineWidth * force;
     this.context.stroke();
