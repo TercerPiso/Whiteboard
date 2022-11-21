@@ -8,7 +8,7 @@ import { ModalController } from '@ionic/angular';
 })
 export class SaveComponent implements OnInit {
 
-  @Input() isCancellable: boolean;
+  @Input() openedFileID?: string;
 
   constructor(private readonly modal: ModalController) { }
 

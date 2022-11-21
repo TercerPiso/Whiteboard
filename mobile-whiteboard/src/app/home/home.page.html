@@ -79,10 +79,10 @@
 
   <div class="clearArea"
       *ngIf="mode === 'CLEAR'"
-      [style.width]="lineWidth*24 + 'px'"
-      [style.height]="lineWidth*24 + 'px'"
+      [style.width]="lineWidth*24*zoom + 'px'"
+      [style.height]="lineWidth*24*zoom + 'px'"
       [style.--shadoWidth]="lineWidth*12 + 'px'"
-      [style.top]="mousePosition.y - (lineWidth*12) + 'px'"
-      [style.left]="mousePosition.x - (lineWidth*12) + 'px'"
+      [style.top]="mousePosition.y - (lineWidth*12*zoom) + 'px'"
+      [style.left]="mousePosition.x - (lineWidth*12*zoom) + 'px'"
   ></div>
 </ion-content>

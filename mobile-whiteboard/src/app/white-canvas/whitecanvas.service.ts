@@ -43,7 +43,7 @@ export class WhitecanvasService {
     this.window.addEventListener('touchend', (e) => this.process(MouseActions.UP, e));
     this.window.addEventListener('touchleave', (e: TouchEvent) => this.process(MouseActions.OUT, e));
     this.window.addEventListener('touchcancel', (e) => this.process(MouseActions.OUT, e));
-    this.erease();
+    this.erease(true);
     if(zoom) {
       this.zoom = zoom;
     }
@@ -66,11 +66,13 @@ export class WhitecanvasService {
     this.mode = mode;
   }
 
-  public erease() {
+  public erease(initialization?: boolean) {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.context.fillStyle = 'white';
     this.context.fillRect(0,0, this.canvas.width, this.canvas.height);
-    this.drawOnWindow();
+    if(!initialization) {
+      this.drawOnWindow();
+    }
   }
 
   public save() {

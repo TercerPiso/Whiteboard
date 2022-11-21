@@ -1,35 +1,60 @@
-// ion-content {
-//     --background: radial-gradient(#006e5e, #004e43);
-// }
-
-section {
-    height: 100%;
-    display: flex;
-    aside {
-        width: 35vw;
-        ion-card {
-            height: 85%;
-            ion-list {
-                height: 60vh;
-                overflow-y: scroll;
-            }
-            ion-card-title {
-                position: relative;
-                ion-icon {
-                    position: absolute;
-                    top: 0px;
-                    height: 100%;
-                    right: 0px;
-                }
-            }
-        }
-    }
-}
-
-span {
-    font-size: 16px;
+header {
+  h3 {
+    margin: 1vw;
     font-weight: bold;
-    color: gray;
-    text-align: center;
-    display: block;
+    position: relative;
+    font-size: 20px;
+    span {
+      position: absolute;
+      right: 0px;
+      font-weight: 500;
+      font-size: 16px;
+      top: 2px;
+      font-family: Helvetica;
+      color: var(--ion-color-primary);
+    }
+  }
+  .progress {
+    background: #ececec;
+    height: 13px;
+    margin: 1vw;
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid #cccccc;
+    .total {
+      display: block;
+      height: 100%;
+      background: var(--ion-color-primary);
+    }
+  }
+}
+section {
+  display: flex;
+  height: calc(100% - 70px);
+  aside {
+    width: 60%;
+    padding: 1vw;
+    height: 100%;
+    ion-list {
+      box-shadow: 0px 0px 6px #00000021;
+      border-radius: 5px;
+      height: 100%;
+    }
+    ion-list-header {
+      ion-label {
+        margin-top: 20px;
+      }
+    }
+    &.folders {
+      width:40%;
+    }
+    .preview {
+      width: 40px;
+      height: 35px;
+      margin-right: 7px;
+    }
+    ion-item.active {
+      --background: #ebebeb;
+    }
+  }
 }

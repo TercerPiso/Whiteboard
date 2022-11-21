@@ -21,6 +21,7 @@ export class HomePage implements AfterViewInit {
   public stroke = new PenRgb(0, 0, 0);
   public lineWidth = localStorage.getItem('-CFG-CUSTOM-L') ? parseInt(localStorage.getItem('-CFG-CUSTOM-L'), 10) : 2;
   public zoom = localStorage.getItem('-CFG-CUSTOM-Z') ? parseInt(localStorage.getItem('-CFG-CUSTOM-Z'), 10) : 2;
+  public openedFileID?: string;
 
   public screensMultiplier = {
     width: localStorage.getItem('-CFG-CUSTOM-W') ? parseFloat(localStorage.getItem('-CFG-CUSTOM-W')) : 2.5,
@@ -43,22 +44,20 @@ export class HomePage implements AfterViewInit {
               private readonly alertController: AlertController,
               private readonly modalCtrl: ModalController) { }
 
-  async openSketch(isCancellable) {
+  async openSketch() {
     const modal = await this.modalCtrl.create({
-      component: DocumentsComponent,
-      componentProps: {
-        isCancellable
-      }
+      component: DocumentsComponent
     });
     modal.present();
     const { data, role } = await modal.onWillDismiss();
+    this.openedFileID = data?.fileID;
   }
 
-  async saveSketch(isCancellable) {
+  async saveSketch() {
     const modal = await this.modalCtrl.create({
       component: SaveComponent,
       componentProps: {
-        isCancellable
+        openedFileID: this.openedFileID
       }
     });
     modal.present();
@@ -83,7 +82,7 @@ export class HomePage implements AfterViewInit {
       this.mousePosition.x = e.touches[0].clientX;
       this.mousePosition.y = e.touches[0].clientY;
     });
-    // this.openSketch(false);
+    this.openSketch();
   }
 
   async expand() {
@@ -207,7 +206,7 @@ export class HomePage implements AfterViewInit {
   }
 
   save() {
-    this.saveSketch(true);
+    this.saveSketch();
   }
 
   async _save() {
@@ -259,7 +258,7 @@ export class HomePage implements AfterViewInit {
   }
 
   load() {
-    this.openSketch(true);
+    this.openSketch();
   }
 
   async _load() {

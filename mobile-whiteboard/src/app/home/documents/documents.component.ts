@@ -1,5 +1,8 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { IonModal, ModalController } from '@ionic/angular';
+import { TFile } from './../../fileserver/pojos';
+import { Component, OnInit } from '@angular/core';
+import { AlertController, ModalController } from '@ionic/angular';
+import { FileserverService } from 'src/app/fileserver/fileserver.service';
+import { Folder } from 'src/app/fileserver/pojos';
 
 @Component({
   selector: 'app-documents',
@@ -8,18 +11,94 @@ import { IonModal, ModalController } from '@ionic/angular';
 })
 export class DocumentsComponent implements OnInit {
 
-  @Input() isCancellable: boolean;
+  public folders: Folder[];
+  public filesInfolder: TFile[];
+  public folderSelectedID?: string;
 
-  constructor(private readonly modal: ModalController) { }
+  constructor(private readonly modal: ModalController,
+              private readonly fsSrv: FileserverService,
+              private readonly alertController: AlertController) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.folders = this.fsSrv.getFolders();
+  }
+
+  selectFolder(id: string) {
+    this.folderSelectedID = id;
+    this.filesInfolder = this.fsSrv.getFolderContent(id);
+  }
 
   cancel() {
     this.modal.dismiss(null, 'cancel');
   }
 
-  confirm() {
-    this.modal.dismiss({}, 'confirm');
+  confirm(fileID: string) {
+    this.modal.dismiss({
+      fileID
+    }, 'confirm');
+  }
+
+  async newFolder() {
+    const alert = await this.alertController.create({
+      header: 'Folder name',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'Save',
+          role: 'confirm',
+          handler: (evt) => {
+            const name = evt.fname.trim();
+            this.fsSrv.addFolder(name);
+          }
+        }
+      ],
+      inputs: [
+        {
+          placeholder: 'Name',
+          name: 'fname',
+        },
+      ],
+    });
+    alert.present();
+  }
+
+  async newFile(folderID: string) {
+    const alert = await this.alertController.create({
+      header: 'File name',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'Save',
+          role: 'confirm',
+          handler: (evt) => {
+            const name = evt.fname.trim();
+            const fileID = this.fsSrv.saveFile(folderID, name, '');
+            this.confirm(fileID);
+          }
+        }
+      ],
+      inputs: [
+        {
+          placeholder: 'Name',
+          name: 'fname',
+        },
+      ],
+    });
+    alert.present();
+  }
+
+  removeFolder(folderID: string) {
+    this.fsSrv.removeFolder(folderID);
+  }
+
+  removeFile(fileID: string) {
+    this.fsSrv.removeFile(fileID);
   }
 
 }
