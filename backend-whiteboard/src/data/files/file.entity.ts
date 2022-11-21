@@ -12,10 +12,10 @@ export class WBFile {
   folderID: string;
 
   @Column()
-  preview: string;
+  preview: string; // TODO: change this for S3 Bucket
 
   @Column()
-  fullFile: string;
+  fullFile: string; // TODO: change this for S3 Bucket
 
   @Column()
   name: string;
