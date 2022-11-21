@@ -1,4 +1,4 @@
-import { TFile } from './../../fileserver/pojos';
+import { FileData, TFile } from './../../fileserver/pojos';
 import { Component, OnInit } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular';
 import { FileserverService } from 'src/app/fileserver/fileserver.service';
@@ -78,7 +78,7 @@ export class DocumentsComponent implements OnInit {
           role: 'confirm',
           handler: (evt) => {
             const name = evt.fname.trim();
-            const fileID = this.fsSrv.saveFile(folderID, name, '');
+            const fileID = this.fsSrv.saveFile(folderID, name, new FileData());
             this.confirm(fileID);
           }
         }

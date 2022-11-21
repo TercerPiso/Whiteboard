@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular';
 import { FileserverService } from 'src/app/fileserver/fileserver.service';
-import { Folder } from 'src/app/fileserver/pojos';
+import { FileData, Folder } from 'src/app/fileserver/pojos';
 
 @Component({
   selector: 'app-save',
@@ -43,7 +43,7 @@ export class SaveComponent implements OnInit {
             handler: (evt) => {
               const name = evt.fname.trim();
               // TODO: add content
-              const fileID = this.fsSrv.saveFile(this.selectedFolderID, name, '');
+              const fileID = this.fsSrv.saveFile(this.selectedFolderID, name, new FileData());
               this.modal.dismiss({fileID}, 'confirm');
             }
           }
@@ -60,7 +60,7 @@ export class SaveComponent implements OnInit {
     }
     if(this.openedFileID) {
       // TODO: add content
-      this.fsSrv.saveWithID(this.openedFileID, '');
+      this.fsSrv.saveWithID(this.openedFileID, new FileData());
       this.modal.dismiss({fileID: this.openedFileID}, 'confirm');
     }
   }
