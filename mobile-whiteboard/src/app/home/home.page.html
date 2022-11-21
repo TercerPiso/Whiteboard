@@ -85,4 +85,6 @@
       [style.top]="mousePosition.y - (lineWidth*12*zoom) + 'px'"
       [style.left]="mousePosition.x - (lineWidth*12*zoom) + 'px'"
   ></div>
+
 </ion-content>
+<app-login *ngIf="!jwt"></app-login>

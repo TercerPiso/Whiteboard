@@ -1,3 +1,4 @@
+import { FileserverService } from 'src/app/fileserver/fileserver.service';
 import { PenRgb } from './../white-canvas/objects';
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { PenModes, Point } from '../white-canvas/objects';
@@ -39,10 +40,14 @@ export class HomePage implements AfterViewInit {
   };
 
   public mousePosition = new Point();
+  public jwt?: string;
 
   constructor(private readonly whiteCanvasSrv: WhitecanvasService,
               private readonly alertController: AlertController,
-              private readonly modalCtrl: ModalController) { }
+              private readonly modalCtrl: ModalController,
+              private readonly fsSrv: FileserverService) {
+    this.jwt = fsSrv.getSession();
+  }
 
   async openSketch() {
     const modal = await this.modalCtrl.create({
@@ -83,7 +88,9 @@ export class HomePage implements AfterViewInit {
       this.mousePosition.x = e.touches[0].clientX;
       this.mousePosition.y = e.touches[0].clientY;
     });
-    this.openSketch();
+    if(this.jwt) {
+      this.openSketch();
+    }
   }
 
   async expand() {

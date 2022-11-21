@@ -1,0 +1,25 @@
+main {
+  background: #1e2736;
+  padding: 5vw;
+  border-radius: 3vw;
+  color: white;
+  header {
+    font-size: 2em;
+    border-bottom: 1px solid #ffffff45;
+    padding-bottom: 2vw;
+    margin-bottom: 3vw;
+  }
+  ion-button {
+    font-size: 17px;
+    line-height: 1.47059;
+    font-weight: 400;
+    color: black;
+    background: white;
+    overflow: hidden;
+    border-radius: 10px;
+    width: 100%;
+    ion-icon {
+      margin-right: 7px;
+    }
+  }
+}

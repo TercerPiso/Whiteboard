@@ -83,4 +83,8 @@ export class FileserverService {
   getFileData(fileID: string): FileWithMeta {
     return new FileWithMeta();
   }
+
+  getSession() {
+    return localStorage.getItem('JWT');
+  }
 }
